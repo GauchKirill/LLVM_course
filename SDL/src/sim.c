@@ -1,26 +1,41 @@
 #include <SDL2/SDL.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
+#include "sim.h"
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
-
 #define PARTICLE_COUNT 50
 
-// Внешняя декларация функции приложения
+// Параметры случайных величин
+#define MIN_RADIUS 5
+#define MAX_RADIUS 15
+#define MIN_SPEED 1
+#define MAX_SPEED 6
+#define MIN_COLOR 50
+#define MAX_COLOR 255
+
 extern void app(void);
 
-// Глобальные данные для связи с app()
 int particle_x[PARTICLE_COUNT];
 int particle_y[PARTICLE_COUNT];
 int particle_vx[PARTICLE_COUNT];
 int particle_vy[PARTICLE_COUNT];
-int particle_radius = 8;
+int particle_radius[PARTICLE_COUNT];
 int particle_color_r[PARTICLE_COUNT];
 int particle_color_g[PARTICLE_COUNT];
 int particle_color_b[PARTICLE_COUNT];
 
+// Функция для получения случайного числа в диапазоне
+int random_range(int min, int max) {
+    return min + rand() % (max - min + 1);
+}
+
 void run_app(void) {
+    // Инициализация генератора случайных чисел
+    srand(time(NULL));
+    
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
         fprintf(stderr, "SDL_Init Error: %s\n", SDL_GetError());
         return;
@@ -47,15 +62,23 @@ void run_app(void) {
         return;
     }
 
-    // Инициализация начальных значений
+    // Инициализация случайных значений для частиц
     for (int i = 0; i < PARTICLE_COUNT; i++) {
-        particle_x[i] = 100 + (i * 15) % 600;
-        particle_y[i] = 100 + (i * 20) % 400;
-        particle_vx[i] = 1 + (i % 3);
-        particle_vy[i] = 1 + ((i + 1) % 3);
-        particle_color_r[i] = 100 + (i * 50) % 155;
-        particle_color_g[i] = 100 + (i * 30) % 155;
-        particle_color_b[i] = 100 + (i * 70) % 155;
+        // Случайный радиус
+        particle_radius[i] = random_range(MIN_RADIUS, MAX_RADIUS);
+        
+        // Случайная позиция (учитывая радиус, чтобы не выходить за границы)
+        particle_x[i] = random_range(particle_radius[i], WINDOW_WIDTH - particle_radius[i]);
+        particle_y[i] = random_range(particle_radius[i], WINDOW_HEIGHT - particle_radius[i]);
+        
+        // Случайная скорость (может быть положительной или отрицательной)
+        particle_vx[i] = random_range(MIN_SPEED, MAX_SPEED) * (rand() % 2 ? 1 : -1);
+        particle_vy[i] = random_range(MIN_SPEED, MAX_SPEED) * (rand() % 2 ? 1 : -1);
+        
+        // Случайный цвет
+        particle_color_r[i] = random_range(MIN_COLOR, MAX_COLOR);
+        particle_color_g[i] = random_range(MIN_COLOR, MAX_COLOR);
+        particle_color_b[i] = random_range(MIN_COLOR, MAX_COLOR);
     }
 
     int running = 1;
@@ -67,10 +90,8 @@ void run_app(void) {
             }
         }
 
-        // Вызов логики приложения
         app();
 
-        // Отрисовка
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
 
@@ -81,16 +102,16 @@ void run_app(void) {
                                  particle_color_b[i], 255);
             
             SDL_Rect rect = {
-                particle_x[i] - particle_radius,
-                particle_y[i] - particle_radius,
-                particle_radius * 2,
-                particle_radius * 2
+                particle_x[i] - particle_radius[i],
+                particle_y[i] - particle_radius[i],
+                particle_radius[i] * 2,
+                particle_radius[i] * 2
             };
             SDL_RenderFillRect(renderer, &rect);
         }
 
         SDL_RenderPresent(renderer);
-        SDL_Delay(16); // ~60 FPS
+        SDL_Delay(16);
     }
 
     SDL_DestroyRenderer(renderer);

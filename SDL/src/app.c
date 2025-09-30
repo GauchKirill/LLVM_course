@@ -1,14 +1,18 @@
-// Логика приложения - только вычисления, без графики
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
 #define PARTICLE_COUNT 50
 
-// Внешние массивы для связи с графикой
+// Параметры случайных величин
+#define MIN_RADIUS 5
+#define MAX_RADIUS 15
+#define MIN_SPEED 1
+#define MAX_SPEED 8
+
 extern int particle_x[PARTICLE_COUNT];
 extern int particle_y[PARTICLE_COUNT];
 extern int particle_vx[PARTICLE_COUNT];
 extern int particle_vy[PARTICLE_COUNT];
-extern int particle_radius;
+extern int particle_radius[PARTICLE_COUNT];
 
 void app(void) {
     // Обновление позиций
@@ -20,33 +24,33 @@ void app(void) {
     // Столкновения со стенками
     for (int i = 0; i < PARTICLE_COUNT; i++) {
         // Левая и правая стенки
-        if (particle_x[i] < particle_radius) {
-            particle_x[i] = particle_radius;
+        if (particle_x[i] < particle_radius[i]) {
+            particle_x[i] = particle_radius[i];
             particle_vx[i] = -particle_vx[i];
         }
-        if (particle_x[i] > WINDOW_WIDTH - particle_radius) {
-            particle_x[i] = WINDOW_WIDTH - particle_radius;
+        if (particle_x[i] > WINDOW_WIDTH - particle_radius[i]) {
+            particle_x[i] = WINDOW_WIDTH - particle_radius[i];
             particle_vx[i] = -particle_vx[i];
         }
         
         // Верхняя и нижняя стенки
-        if (particle_y[i] < particle_radius) {
-            particle_y[i] = particle_radius;
+        if (particle_y[i] < particle_radius[i]) {
+            particle_y[i] = particle_radius[i];
             particle_vy[i] = -particle_vy[i];
         }
-        if (particle_y[i] > WINDOW_HEIGHT - particle_radius) {
-            particle_y[i] = WINDOW_HEIGHT - particle_radius;
+        if (particle_y[i] > WINDOW_HEIGHT - particle_radius[i]) {
+            particle_y[i] = WINDOW_HEIGHT - particle_radius[i];
             particle_vy[i] = -particle_vy[i];
         }
     }
 
-    // Столкновения между частицами (упрощенная версия без sqrt)
+    // Столкновения между частицами
     for (int i = 0; i < PARTICLE_COUNT; i++) {
         for (int j = i + 1; j < PARTICLE_COUNT; j++) {
             int dx = particle_x[i] - particle_x[j];
             int dy = particle_y[i] - particle_y[j];
             int distance_squared = dx * dx + dy * dy;
-            int min_distance = particle_radius * 2;
+            int min_distance = particle_radius[i] + particle_radius[j];
             int min_distance_squared = min_distance * min_distance;
 
             if (distance_squared < min_distance_squared && distance_squared > 0) {
@@ -61,8 +65,7 @@ void app(void) {
                 particle_vy[j] = temp_vy;
 
                 // Простое раздвигание частиц чтобы избежать залипания
-                // Используем фиксированное смещение вместо вычисления точного расстояния
-                int overlap_fix = 2; // фиксированное смещение
+                int overlap_fix = 2;
                 
                 // Сдвигаем частицы в противоположные стороны по осям
                 if (dx > 0) {
