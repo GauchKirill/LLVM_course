@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <math.h>
 #include "sim.h"
 
 #define WINDOW_WIDTH 800
@@ -30,6 +31,17 @@ int particle_color_b[PARTICLE_COUNT];
 // Функция для получения случайного числа в диапазоне
 int random_range(int min, int max) {
     return min + rand() % (max - min + 1);
+}
+
+// Функция для рисования заполненного круга
+void draw_filled_circle(SDL_Renderer* renderer, int center_x, int center_y, int radius) {
+    for (int y = -radius; y <= radius; y++) {
+        for (int x = -radius; x <= radius; x++) {
+            if (x * x + y * y <= radius * radius) {
+                SDL_RenderDrawPoint(renderer, center_x + x, center_y + y);
+            }
+        }
+    }
 }
 
 void run_app(void) {
@@ -101,13 +113,8 @@ void run_app(void) {
                                  particle_color_g[i], 
                                  particle_color_b[i], 255);
             
-            SDL_Rect rect = {
-                particle_x[i] - particle_radius[i],
-                particle_y[i] - particle_radius[i],
-                particle_radius[i] * 2,
-                particle_radius[i] * 2
-            };
-            SDL_RenderFillRect(renderer, &rect);
+            // Рисуем заполненный круг вместо квадрата
+            draw_filled_circle(renderer, particle_x[i], particle_y[i], particle_radius[i]);
         }
 
         SDL_RenderPresent(renderer);

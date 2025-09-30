@@ -54,7 +54,7 @@ void app(void) {
             int min_distance_squared = min_distance * min_distance;
 
             if (distance_squared < min_distance_squared && distance_squared > 0) {
-                // Обмен скоростями (упрощенная модель упругого столкновения)
+                // Обмен скоростями, упрощенная модель упругого столкновения)
                 int temp_vx = particle_vx[i];
                 int temp_vy = particle_vy[i];
                 
