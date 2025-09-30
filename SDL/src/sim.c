@@ -44,7 +44,7 @@ void draw_filled_circle(SDL_Renderer* renderer, int center_x, int center_y, int 
     }
 }
 
-void run_app(void) {
+void sim(void) {
     // Инициализация генератора случайных чисел
     srand(time(NULL));
     
