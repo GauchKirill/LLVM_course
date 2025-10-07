@@ -1,10 +1,10 @@
 # Компилятор и флаги
 CC = clang
 CXX = clang++
-CFLAGS = -Wall -Wextra -std=c99 -pedantic -O2 -Iinclude -fPIE
+CFLAGS = -Wall -Wextra -std=c99 -pedantic -O2 -Iinclude -fPIC
 CXXFLAGS = -Wall -Wextra -std=c++14 -fno-rtti -fPIC -w
 SDL_FLAGS = -lSDL2 -lm
-LDFLAGS = -pie
+LDFLAGS = -no-pie
 
 # Пути LLVM
 LLVM_CONFIG = llvm-config
@@ -21,7 +21,7 @@ PASS_DIR = pass
 PASS_BUILD_DIR = pass_build
 
 # Целевые файлы
-TARGET = $(BIN_DIR)/gas_simulation
+TARGET = $(BIN_DIR)/gas_simulation.out
 SOURCES = $(wildcard $(SRC_DIR)/*.c)
 OBJECTS = $(SOURCES:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
@@ -47,24 +47,21 @@ $(PASS_TARGET): $(PASS_SOURCE)
 	@mkdir -p $(PASS_BUILD_DIR)
 	$(CXX) $(CXXFLAGS) $(LLVM_CXXFLAGS) -shared -o $(PASS_TARGET) $< $(LLVM_LDFLAGS)
 
-# Инструментирование app.c (упрощенная версия)
-instrument: $(PASS_TARGET) logger.o
+# Инструментирование app.c
+instrument: $(PASS_TARGET) $(OBJ_DIR)/logger.o
 	@echo "Инструментирование app.c..."
 	@mkdir -p $(IR_DIR)
 	# Компилируем app.c в LLVM IR
-	$(CC) -Wall -Wextra -std=c99 -O2 -Iinclude -fPIC -S -emit-llvm $(SRC_DIR)/app.c -o $(IR_DIR)/app.ll
+	$(CC) $(CFLAGS) -S -emit-llvm $(SRC_DIR)/app.c -o $(IR_DIR)/app.ll
 	# Конвертируем в bitcode
-	$(CC) -Wall -Wextra -std=c99 -O2 -Iinclude -fPIC -c -emit-llvm $(SRC_DIR)/app.c -o $(IR_DIR)/app.bc
+	$(CC) $(CFLAGS) -c -emit-llvm $(SRC_DIR)/app.c -o $(IR_DIR)/app.bc
 	# Инструментируем с помощью Pass
 	opt -load-pass-plugin $(PASS_TARGET) -passes="insttrace" $(IR_DIR)/app.bc -o $(IR_DIR)/app_instrumented.bc
 	# Компилируем обратно в объектный файл
 	llc $(IR_DIR)/app_instrumented.bc -o $(IR_DIR)/app_instrumented.s
-	$(CC) -Wall -Wextra -std=c99 -O2 -Iinclude -fPIC -c $(IR_DIR)/app_instrumented.s -o $(OBJ_DIR)/app_instrumented.o
+	$(CC) $(CFLAGS) -c $(IR_DIR)/app_instrumented.s -o $(OBJ_DIR)/app_instrumented.o
 	# Собираем финальный исполняемый файл
-	$(CC) -no-pie $(OBJ_DIR)/app_instrumented.o $(OBJ_DIR)/sim.o $(OBJ_DIR)/start.o logger.o -o $(BIN_DIR)/app_instrumented $(SDL_FLAGS)
-# Компиляция логгера
-logger.o: logger.c
-	$(CC) $(CFLAGS) -c logger.c -o logger.o
+	$(CC) $(OBJ_DIR)/app_instrumented.o $(OBJ_DIR)/sim.o $(OBJ_DIR)/start.o $(OBJ_DIR)/logger.o -o $(BIN_DIR)/app_instrumented.out $(SDL_FLAGS) $(LDFLAGS)
 
 # Анализ трасс
 analyze:
@@ -73,7 +70,7 @@ analyze:
 
 # Очистка
 clean:
-	rm -rf $(OBJ_DIR) $(BIN_DIR) $(IR_DIR) $(PASS_BUILD_DIR) *.o trace.log pattern_stats.txt
+	rm -rf $(OBJ_DIR) $(BIN_DIR) $(IR_DIR) $(PASS_BUILD_DIR) trace.log pattern_stats.txt
 
 # Пересборка
 rebuild: clean all
@@ -84,7 +81,7 @@ run: $(TARGET)
 
 # Запуск инструментированной программы
 run-instrumented: instrument
-	./$(BIN_DIR)/app_instrumented
+	./$(BIN_DIR)/app_instrumented.out
 
 # Проверка зависимостей
 check-deps:
@@ -107,4 +104,30 @@ install-deps:
 		echo "Неизвестный дистрибутив. Установите clang, llvm и python3 вручную."; \
 	fi
 
-.PHONY: all clean rebuild run debug check-deps install-deps instrument run-instrumented analyze
+# Информация о структуре проекта
+info:
+	@echo "=== Структура проекта ==="
+	@echo "Исходные коды:      $(SRC_DIR)/"
+	@echo "Заголовочные файлы: $(INC_DIR)/"
+	@echo "Объектные файлы:    $(OBJ_DIR)/"
+	@echo "Исполняемые файлы:  $(BIN_DIR)/"
+	@echo "LLVM IR файлы:      $(IR_DIR)/"
+	@echo "Pass исходники:     $(PASS_DIR)/"
+	@echo "Pass бинарники:     $(PASS_BUILD_DIR)/"
+
+# Справка
+help:
+	@echo "Доступные цели:"
+	@echo "  all              - сборка проекта"
+	@echo "  instrument       - инструментирование app.c"
+	@echo "  run-instrumented - запуск инструментированного приложения"
+	@echo "  analyze          - анализ собранных трасс"
+	@echo "  clean            - удаление скомпилированных файлов"
+	@echo "  rebuild          - пересборка проекта"
+	@echo "  run              - запуск обычной программы"
+	@echo "  check-deps       - проверка зависимостей"
+	@echo "  install-deps     - установка зависимостей"
+	@echo "  info             - информация о структуре проекта"
+	@echo "  help             - справка"
+
+.PHONY: all clean rebuild run check-deps install-deps instrument run-instrumented analyze info help
