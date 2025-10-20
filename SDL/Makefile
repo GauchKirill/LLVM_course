@@ -29,8 +29,12 @@ OBJECTS = $(SOURCES:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 PASS_SOURCE = $(PASS_DIR)/InstTracePass.cpp
 PASS_TARGET = $(PASS_BUILD_DIR)/InstTracePass.so
 
+# Файлы IR генератора
+APP_IR_GEN = $(BIN_DIR)/app_ir_gen.out
+SRC_IR_GEN = $(SRC_DIR)/app_ir_gen.cpp
+
 # Правило по умолчанию
-all: $(TARGET)
+all: $(TARGET) $(APP_IR_GEN)
 
 # Сборка исполняемого файла
 $(TARGET): $(OBJECTS)
@@ -67,6 +71,15 @@ instrument: $(PASS_TARGET) $(OBJ_DIR)/logger.o
 analyze:
 	@echo "Анализ трасс..."
 	python3 analyze_trace.py
+
+# Сборка IR генератора
+$(APP_IR_GEN): $(SRC_IR_GEN)
+	@mkdir -p $(BIN_DIR)
+	$(CXX) $(CXXFLAGS) $(LLVM_CXXFLAGS) -I$(INC_DIR) $< -o $@ $(LLVM_LDFLAGS) $(SDL_FLAGS) $(LDFLAGS)
+
+# Запуска генератора
+run_ir_gen: $(APP_IR_GEN)
+	./$(APP_IR_GEN)
 
 # Очистка
 clean:
