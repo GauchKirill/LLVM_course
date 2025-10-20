@@ -1,0 +1,118 @@
+Статистика паттернов инструкций
+================================
+
+Паттерны длины 1:
+--------------------------------------------------
+348269 | load i32, ptr var align 4, !tbaa !4
+226983 | getelementptr inbounds [50 x i32], ptr var i64 0, i64 var
+202125 | mul nsw i32 var var
+154765 | br i1 var label var label var
+134750 | sub nsw i32 var var
+ 75675 | add nuw nsw i64 var const
+ 73585 | icmp eq i64 var const
+ 67831 | add nsw i32 var var
+ 67375 | add nuw nsw i32 var var
+ 67375 | icmp ult i32 var var
+ 67375 | icmp ne i32 var const
+ 67375 | and i1 var var
+  5500 | icmp slt i32 var var
+  5500 | icmp sgt i32 var var
+  2811 | br label var
+  2750 | sub nsw i32 800, var
+  2750 | sub nsw i32 600, var
+  2750 | icmp ult i64 var const
+  2640 | load <4 x i32>, ptr var align 16, !tbaa !4
+  1320 | add nsw <4 x i32> var var
+
+Паттерны длины 2:
+--------------------------------------------------
+213163 | getelementptr inbounds [50 x i32], ptr var i64 0, i64 var → load i32, ptr var align 4, !tbaa !4
+140229 | load i32, ptr var align 4, !tbaa !4 → getelementptr inbounds [50 x i32], ptr var i64 0, i64 var
+134750 | load i32, ptr var align 4, !tbaa !4 → sub nsw i32 var var
+ 75583 | br i1 var label var label var → add nuw nsw i64 var const
+ 73585 | icmp eq i64 var const → br i1 var label var label var
+ 72925 | add nuw nsw i64 var const → icmp eq i64 var const
+ 67553 | load i32, ptr var align 4, !tbaa !4 → add nsw i32 var var
+ 67375 | sub nsw i32 var var → load i32, ptr var align 4, !tbaa !4
+ 67375 | sub nsw i32 var var → mul nsw i32 var var
+ 67375 | mul nsw i32 var var → mul nsw i32 var var
+ 67375 | mul nsw i32 var var → add nuw nsw i32 var var
+ 67375 | add nuw nsw i32 var var → getelementptr inbounds [50 x i32], ptr var i64 0, i64 var
+ 67375 | add nsw i32 var var → mul nsw i32 var var
+ 67375 | mul nsw i32 var var → icmp ult i32 var var
+ 67375 | icmp ult i32 var var → icmp ne i32 var const
+ 67375 | icmp ne i32 var const → and i1 var var
+ 67375 | and i1 var var → br i1 var label var label var
+ 64714 | br i1 var label var label var → load i32, ptr var align 4, !tbaa !4
+  8135 | br i1 var label var label var → getelementptr inbounds [50 x i32], ptr var i64 0, i64 var
+  8085 | getelementptr inbounds [50 x i32], ptr var i64 0, i64 var → getelementptr inbounds [50 x i32], ptr var i64 0, i64 var
+
+Паттерны длины 3:
+--------------------------------------------------
+137534 | load i32, ptr var align 4, !tbaa !4 → getelementptr inbounds [50 x i32], ptr var i64 0, i64 var → load i32, ptr var align 4, !tbaa !4
+134750 | getelementptr inbounds [50 x i32], ptr var i64 0, i64 var → load i32, ptr var align 4, !tbaa !4 → sub nsw i32 var var
+ 72925 | add nuw nsw i64 var const → icmp eq i64 var const → br i1 var label var label var
+ 72833 | br i1 var label var label var → add nuw nsw i64 var const → icmp eq i64 var const
+ 67375 | load i32, ptr var align 4, !tbaa !4 → sub nsw i32 var var → load i32, ptr var align 4, !tbaa !4
+ 67375 | sub nsw i32 var var → load i32, ptr var align 4, !tbaa !4 → getelementptr inbounds [50 x i32], ptr var i64 0, i64 var
+ 67375 | load i32, ptr var align 4, !tbaa !4 → sub nsw i32 var var → mul nsw i32 var var
+ 67375 | sub nsw i32 var var → mul nsw i32 var var → mul nsw i32 var var
+ 67375 | mul nsw i32 var var → mul nsw i32 var var → add nuw nsw i32 var var
+ 67375 | mul nsw i32 var var → add nuw nsw i32 var var → getelementptr inbounds [50 x i32], ptr var i64 0, i64 var
+ 67375 | add nuw nsw i32 var var → getelementptr inbounds [50 x i32], ptr var i64 0, i64 var → load i32, ptr var align 4, !tbaa !4
+ 67375 | getelementptr inbounds [50 x i32], ptr var i64 0, i64 var → load i32, ptr var align 4, !tbaa !4 → add nsw i32 var var
+ 67375 | load i32, ptr var align 4, !tbaa !4 → add nsw i32 var var → mul nsw i32 var var
+ 67375 | add nsw i32 var var → mul nsw i32 var var → icmp ult i32 var var
+ 67375 | mul nsw i32 var var → icmp ult i32 var var → icmp ne i32 var const
+ 67375 | icmp ult i32 var var → icmp ne i32 var const → and i1 var var
+ 67375 | icmp ne i32 var const → and i1 var var → br i1 var label var label var
+ 67341 | and i1 var var → br i1 var label var label var → add nuw nsw i64 var const
+ 64680 | icmp eq i64 var const → br i1 var label var label var → load i32, ptr var align 4, !tbaa !4
+ 64680 | br i1 var label var label var → load i32, ptr var align 4, !tbaa !4 → getelementptr inbounds [50 x i32], ptr var i64 0, i64 var
+
+Паттерны длины 4:
+--------------------------------------------------
+134750 | load i32, ptr var align 4, !tbaa !4 → getelementptr inbounds [50 x i32], ptr var i64 0, i64 var → load i32, ptr var align 4, !tbaa !4 → sub nsw i32 var var
+ 72833 | br i1 var label var label var → add nuw nsw i64 var const → icmp eq i64 var const → br i1 var label var label var
+ 67375 | getelementptr inbounds [50 x i32], ptr var i64 0, i64 var → load i32, ptr var align 4, !tbaa !4 → sub nsw i32 var var → load i32, ptr var align 4, !tbaa !4
+ 67375 | load i32, ptr var align 4, !tbaa !4 → sub nsw i32 var var → load i32, ptr var align 4, !tbaa !4 → getelementptr inbounds [50 x i32], ptr var i64 0, i64 var
+ 67375 | sub nsw i32 var var → load i32, ptr var align 4, !tbaa !4 → getelementptr inbounds [50 x i32], ptr var i64 0, i64 var → load i32, ptr var align 4, !tbaa !4
+ 67375 | getelementptr inbounds [50 x i32], ptr var i64 0, i64 var → load i32, ptr var align 4, !tbaa !4 → sub nsw i32 var var → mul nsw i32 var var
+ 67375 | load i32, ptr var align 4, !tbaa !4 → sub nsw i32 var var → mul nsw i32 var var → mul nsw i32 var var
+ 67375 | sub nsw i32 var var → mul nsw i32 var var → mul nsw i32 var var → add nuw nsw i32 var var
+ 67375 | mul nsw i32 var var → mul nsw i32 var var → add nuw nsw i32 var var → getelementptr inbounds [50 x i32], ptr var i64 0, i64 var
+ 67375 | mul nsw i32 var var → add nuw nsw i32 var var → getelementptr inbounds [50 x i32], ptr var i64 0, i64 var → load i32, ptr var align 4, !tbaa !4
+ 67375 | add nuw nsw i32 var var → getelementptr inbounds [50 x i32], ptr var i64 0, i64 var → load i32, ptr var align 4, !tbaa !4 → add nsw i32 var var
+ 67375 | getelementptr inbounds [50 x i32], ptr var i64 0, i64 var → load i32, ptr var align 4, !tbaa !4 → add nsw i32 var var → mul nsw i32 var var
+ 67375 | load i32, ptr var align 4, !tbaa !4 → add nsw i32 var var → mul nsw i32 var var → icmp ult i32 var var
+ 67375 | add nsw i32 var var → mul nsw i32 var var → icmp ult i32 var var → icmp ne i32 var const
+ 67375 | mul nsw i32 var var → icmp ult i32 var var → icmp ne i32 var const → and i1 var var
+ 67375 | icmp ult i32 var var → icmp ne i32 var const → and i1 var var → br i1 var label var label var
+ 67341 | icmp ne i32 var const → and i1 var var → br i1 var label var label var → add nuw nsw i64 var const
+ 67341 | and i1 var var → br i1 var label var label var → add nuw nsw i64 var const → icmp eq i64 var const
+ 64680 | add nuw nsw i64 var const → icmp eq i64 var const → br i1 var label var label var → load i32, ptr var align 4, !tbaa !4
+ 64680 | icmp eq i64 var const → br i1 var label var label var → load i32, ptr var align 4, !tbaa !4 → getelementptr inbounds [50 x i32], ptr var i64 0, i64 var
+
+Паттерны длины 5:
+--------------------------------------------------
+ 67375 | load i32, ptr var align 4, !tbaa !4 → getelementptr inbounds [50 x i32], ptr var i64 0, i64 var → load i32, ptr var align 4, !tbaa !4 → sub nsw i32 var var → load i32, ptr var align 4, !tbaa !4
+ 67375 | getelementptr inbounds [50 x i32], ptr var i64 0, i64 var → load i32, ptr var align 4, !tbaa !4 → sub nsw i32 var var → load i32, ptr var align 4, !tbaa !4 → getelementptr inbounds [50 x i32], ptr var i64 0, i64 var
+ 67375 | load i32, ptr var align 4, !tbaa !4 → sub nsw i32 var var → load i32, ptr var align 4, !tbaa !4 → getelementptr inbounds [50 x i32], ptr var i64 0, i64 var → load i32, ptr var align 4, !tbaa !4
+ 67375 | sub nsw i32 var var → load i32, ptr var align 4, !tbaa !4 → getelementptr inbounds [50 x i32], ptr var i64 0, i64 var → load i32, ptr var align 4, !tbaa !4 → sub nsw i32 var var
+ 67375 | load i32, ptr var align 4, !tbaa !4 → getelementptr inbounds [50 x i32], ptr var i64 0, i64 var → load i32, ptr var align 4, !tbaa !4 → sub nsw i32 var var → mul nsw i32 var var
+ 67375 | getelementptr inbounds [50 x i32], ptr var i64 0, i64 var → load i32, ptr var align 4, !tbaa !4 → sub nsw i32 var var → mul nsw i32 var var → mul nsw i32 var var
+ 67375 | load i32, ptr var align 4, !tbaa !4 → sub nsw i32 var var → mul nsw i32 var var → mul nsw i32 var var → add nuw nsw i32 var var
+ 67375 | sub nsw i32 var var → mul nsw i32 var var → mul nsw i32 var var → add nuw nsw i32 var var → getelementptr inbounds [50 x i32], ptr var i64 0, i64 var
+ 67375 | mul nsw i32 var var → mul nsw i32 var var → add nuw nsw i32 var var → getelementptr inbounds [50 x i32], ptr var i64 0, i64 var → load i32, ptr var align 4, !tbaa !4
+ 67375 | mul nsw i32 var var → add nuw nsw i32 var var → getelementptr inbounds [50 x i32], ptr var i64 0, i64 var → load i32, ptr var align 4, !tbaa !4 → add nsw i32 var var
+ 67375 | add nuw nsw i32 var var → getelementptr inbounds [50 x i32], ptr var i64 0, i64 var → load i32, ptr var align 4, !tbaa !4 → add nsw i32 var var → mul nsw i32 var var
+ 67375 | getelementptr inbounds [50 x i32], ptr var i64 0, i64 var → load i32, ptr var align 4, !tbaa !4 → add nsw i32 var var → mul nsw i32 var var → icmp ult i32 var var
+ 67375 | load i32, ptr var align 4, !tbaa !4 → add nsw i32 var var → mul nsw i32 var var → icmp ult i32 var var → icmp ne i32 var const
+ 67375 | add nsw i32 var var → mul nsw i32 var var → icmp ult i32 var var → icmp ne i32 var const → and i1 var var
+ 67375 | mul nsw i32 var var → icmp ult i32 var var → icmp ne i32 var const → and i1 var var → br i1 var label var label var
+ 67341 | icmp ult i32 var var → icmp ne i32 var const → and i1 var var → br i1 var label var label var → add nuw nsw i64 var const
+ 67341 | icmp ne i32 var const → and i1 var var → br i1 var label var label var → add nuw nsw i64 var const → icmp eq i64 var const
+ 67341 | and i1 var var → br i1 var label var label var → add nuw nsw i64 var const → icmp eq i64 var const → br i1 var label var label var
+ 64680 | add nuw nsw i64 var const → icmp eq i64 var const → br i1 var label var label var → load i32, ptr var align 4, !tbaa !4 → getelementptr inbounds [50 x i32], ptr var i64 0, i64 var
+ 64680 | icmp eq i64 var const → br i1 var label var label var → load i32, ptr var align 4, !tbaa !4 → getelementptr inbounds [50 x i32], ptr var i64 0, i64 var → load i32, ptr var align 4, !tbaa !4
+

@@ -95,13 +95,13 @@ check-deps:
 install-deps:
 	@echo "Установка зависимостей..."
 	@if [ -f /etc/debian_version ]; then \
-		sudo apt-get update && sudo apt-get install -y clang llvm python3; \
+		sudo apt-get update && sudo apt-get install -y clang llvm python3 libsdl2-dev; \
 	elif [ -f /etc/arch-release ]; then \
-		sudo pacman -S --noconfirm clang llvm python; \
+		sudo pacman -S --noconfirm clang llvm python libsdl2-dev; \
 	elif [ -f /etc/redhat-release ]; then \
-		sudo dnf install -y clang llvm python3; \
+		sudo dnf install -y clang llvm python3 libsdl2-dev; \
 	else \
-		echo "Неизвестный дистрибутив. Установите clang, llvm и python3 вручную."; \
+		echo "Неизвестный дистрибутив. Установите clang, llvm, libsdl2-dev и python3 вручную."; \
 	fi
 
 # Информация о структуре проекта
