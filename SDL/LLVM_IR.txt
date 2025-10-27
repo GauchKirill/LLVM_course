@@ -1,0 +1,141 @@
+./bin/app_ir_gen.out
+=== ГЕНЕРИРОВАННЫЙ LLVM IR ===
+; ModuleID = 'app.c'
+source_filename = "app.c"
+
+declare i32 @sim(ptr, ptr, ptr, ptr, ptr, ptr, i32)
+
+declare void @simInit()
+
+declare void @simExit()
+
+define void @app() {
+entry:
+  call void @simInit()
+  br label %main_loop
+
+main_loop:                                        ; preds = %render, %entry
+  %loop_counter = phi i32 [ 0, %entry ], [ %next_counter, %render ]
+  %should_exit = icmp sge i32 %loop_counter, 100
+  br i1 %should_exit, label %exit, label %update
+
+update:                                           ; preds = %main_loop
+  br label %render
+
+render:                                           ; preds = %update
+  %sim_result = call i32 @sim(ptr null, ptr null, ptr null, ptr null, ptr null, ptr null, i32 50)
+  %next_counter = add i32 %loop_counter, 1
+  br label %main_loop
+
+exit:                                             ; preds = %main_loop
+  call void @simExit()
+  ret void
+}
+
+[VERIFICATION] OK
+
+[EE] Запуск интерпретатора...
+[EE] Выполнение функции app...
+[EE] Выполнение завершено
+simInit called
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+sim called with 50 particles
+simExit called
